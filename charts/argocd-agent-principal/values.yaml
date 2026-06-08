@@ -1,0 +1,58 @@
+# Default values for argocd-agent-principal.
+# Upstream chart from argoproj-labs/argocd-agent packaged for public distribution.
+# Source: https://github.com/argoproj-labs/argocd-agent/tree/main/install/helm-repo/argocd-agent-principal
+
+image:
+  repository: quay.io/argoprojlabs/argocd-agent
+  tag: "v0.9.0"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: "1000m"
+    memory: 512Mi
+
+service:
+  type: ClusterIP
+  port: 443
+  targetPort: 8443
+  annotations: {}
+
+principal:
+  namespace: argocd
+  listen:
+    host: ""
+    port: 8443
+  log:
+    level: info
+    format: text
+  tls:
+    secretName: argocd-agent-principal-tls
+    server:
+      rootCaSecretName: argocd-agent-ca
+      allowGenerate: false
+    clientCert:
+      require: false
+      matchSubject: false
+    insecurePlaintext: false
+    minVersion: "tls1.3"
+  jwt:
+    allowGenerate: false
+    secretName: argocd-agent-jwt
+  redis:
+    compressionType: gzip
+    server:
+      address: "argocd-redis:6379"
+  redisProxy:
+    enabled: true
+  resourceProxy:
+    enabled: true
+    secretName: argocd-agent-resource-proxy-tls
+  namespaceCreate:
+    enable: false
+    pattern: ""

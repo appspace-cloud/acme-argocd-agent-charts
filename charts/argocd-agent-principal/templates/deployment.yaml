@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "argocd-agent-principal.fullname" . }}
+  namespace: {{ .Values.principal.namespace }}
+  labels:
+    app.kubernetes.io/name: argocd-agent-principal
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: argocd-agent-principal
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: argocd-agent-principal
+    spec:
+      serviceAccountName: {{ include "argocd-agent-principal.fullname" . }}
+      containers:
+        - name: principal
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - principal
+            - --namespace={{ .Values.principal.namespace }}
+            - --listen-port={{ .Values.principal.listen.port }}
+            {{- if .Values.principal.listen.host }}
+            - --listen-host={{ .Values.principal.listen.host }}
+            {{- end }}
+            - --redis-addr={{ .Values.principal.redis.server.address }}
+            - --jwt-key-secret={{ .Values.principal.jwt.secretName }}
+            {{- if .Values.principal.namespaceCreate.enable }}
+            - --namespace-create=true
+            - --namespace-create-pattern={{ .Values.principal.namespaceCreate.pattern }}
+            {{- end }}
+            - --log-level={{ .Values.principal.log.level }}
+            - --log-format={{ .Values.principal.log.format }}
+            {{- if not .Values.principal.tls.insecurePlaintext }}
+            - --tls-cert-secret={{ .Values.principal.tls.secretName }}
+            - --tls-root-ca-secret={{ .Values.principal.tls.server.rootCaSecretName }}
+            - --tls-min-version={{ .Values.principal.tls.minVersion }}
+            {{- if .Values.principal.tls.clientCert.require }}
+            - --tls-require-client-cert=true
+            {{- if .Values.principal.tls.clientCert.matchSubject }}
+            - --tls-match-subject=true
+            {{- end }}
+            {{- end }}
+            {{- else }}
+            - --insecure-plaintext=true
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          ports:
+            - name: grpc
+              containerPort: {{ .Values.principal.listen.port }}
+              protocol: TCP

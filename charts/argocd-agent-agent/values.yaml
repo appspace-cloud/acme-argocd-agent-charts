@@ -1,0 +1,43 @@
+# Default values for argocd-agent-agent.
+# Upstream chart from argoproj-labs/argocd-agent packaged for public distribution.
+
+image:
+  repository: quay.io/argoprojlabs/argocd-agent
+  tag: "v0.9.0"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+fullnameOverride: ""
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+rbac:
+  create: true
+  createClusterRole: true
+
+agentMode: "autonomous"
+auth: "mtls:any"
+logLevel: "info"
+logFormat: "text"
+server: "principal.server.address.com"
+serverPort: "443"
+tlsClientInSecure: "false"
+redisAddress: "argocd-redis:6379"
+argoCdRedisSecretName: "argocd-redis"
+argoCdRedisPasswordKey: "auth"
+tlsSecretName: "argocd-agent-client-tls"
+tlsRootCASecretName: "argocd-agent-ca"
+destinationBasedMapping: false
+createNamespace: false
+allowedNamespaces: ""

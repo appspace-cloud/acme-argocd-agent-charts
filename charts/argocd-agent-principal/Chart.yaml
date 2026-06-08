@@ -1,0 +1,17 @@
+apiVersion: v2
+name: argocd-agent-principal
+description: Argo CD Agent Principal component for multi-cluster application management via pull-based GitOps
+type: application
+version: 0.3.1
+appVersion: "v0.9.0"
+home: https://github.com/argoproj-labs/argocd-agent
+sources:
+  - https://github.com/argoproj-labs/argocd-agent
+keywords:
+  - argocd
+  - gitops
+  - multi-cluster
+  - agent
+maintainers:
+  - name: Appspace Platform Engineering
+    email: platform@appspace.com
