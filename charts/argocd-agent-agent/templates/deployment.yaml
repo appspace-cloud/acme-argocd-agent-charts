@@ -4,12 +4,13 @@ metadata:
   name: {{ include "argocd-agent-agent.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "argocd-agent-agent.labels" . | nindent 4 }}
+    app.kubernetes.io/name: argocd-agent-agent
+    app.kubernetes.io/managed-by: Helm
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: argocd-agent-agent
+      {{- include "argocd-agent-agent.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:

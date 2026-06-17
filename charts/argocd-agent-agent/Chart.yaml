@@ -2,7 +2,7 @@ apiVersion: v2
 name: argocd-agent-agent
 description: Argo CD Agent component for workload clusters - connects outbound to the principal on the control plane
 type: application
-version: 0.2.4
+version: 0.2.5
 appVersion: "v0.9.0"
 home: https://github.com/argoproj-labs/argocd-agent
 sources:
