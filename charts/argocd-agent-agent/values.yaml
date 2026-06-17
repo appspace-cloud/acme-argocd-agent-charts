@@ -41,3 +41,23 @@ tlsRootCASecretName: "argocd-agent-ca"
 destinationBasedMapping: false
 createNamespace: false
 allowedNamespaces: ""
+
+podDisruptionBudget:
+  enabled: false
+  labels: {}
+  annotations: {}
+  minAvailable: 1
+  maxUnavailable: ""
+
+verticalPodAutoscaler:
+  enabled: false
+  labels: {}
+  annotations: {}
+  updateMode: InPlaceOrRecreate
+  containerName: "*"
+  controlledResources:
+    - memory
+  minAllowed:
+    memory: 64Mi
+  maxAllowed:
+    memory: 1Gi

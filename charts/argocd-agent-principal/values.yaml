@@ -110,9 +110,30 @@ tolerations: []
 topologySpreadConstraints: []
 # -- PriorityClassName for the principal Pod.
 priorityClassName: ""
-# -- Grace period for Pod termination (seconds).
 terminationGracePeriodSeconds: 30
-# -- Host aliases injected into /etc/hosts of the principal Pod.
+
+## @section PodDisruptionBudget
+podDisruptionBudget:
+  enabled: false
+  labels: {}
+  annotations: {}
+  minAvailable: 1
+  maxUnavailable: ""
+
+## @section VerticalPodAutoscaler
+verticalPodAutoscaler:
+  enabled: false
+  labels: {}
+  annotations: {}
+  updateMode: InPlaceOrRecreate
+  containerName: "*"
+  controlledResources:
+    - memory
+  minAllowed:
+    memory: 128Mi
+  maxAllowed:
+    memory: 2Gi
+
 hostAliases: []
 # -- DNS policy for the Pod (e.g. ClusterFirst, None). Empty leaves the default.
 dnsPolicy: ""
