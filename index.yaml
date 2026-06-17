@@ -3,6 +3,28 @@ entries:
   argocd-agent-agent:
   - apiVersion: v2
     appVersion: v0.9.0
+    created: "2026-06-17T14:15:05.146351339Z"
+    description: Argo CD Agent component for workload clusters - connects outbound
+      to the principal on the control plane
+    digest: e7658d9f0379cfbd097b52a35c3f1d9e98b83187066f6930e3170a5e0ff9fb14
+    home: https://github.com/argoproj-labs/argocd-agent
+    keywords:
+    - argocd
+    - gitops
+    - multi-cluster
+    - agent
+    maintainers:
+    - email: platform@appspace.com
+      name: Appspace Platform Engineering
+    name: argocd-agent-agent
+    sources:
+    - https://github.com/argoproj-labs/argocd-agent
+    type: application
+    urls:
+    - https://github.com/appspace-cloud/acme-argocd-agent-charts/releases/download/argocd-agent-agent-0.2.4/argocd-agent-agent-0.2.4.tgz
+    version: 0.2.4
+  - apiVersion: v2
+    appVersion: v0.9.0
     created: "2026-06-17T13:53:27.574263966Z"
     description: Argo CD Agent component for workload clusters - connects outbound
       to the principal on the control plane
@@ -116,4 +138,4 @@ entries:
     urls:
     - https://appspace-cloud.github.io/acme-argocd-agent-charts/argocd-agent-principal-0.3.1.tgz
     version: 0.3.1
-generated: "2026-06-17T13:53:27.903453019Z"
+generated: "2026-06-17T14:15:05.146366397Z"
