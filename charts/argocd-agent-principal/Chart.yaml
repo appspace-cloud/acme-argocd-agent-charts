@@ -16,4 +16,4 @@ name: argocd-agent-principal
 sources:
 - https://github.com/argoproj-labs/argocd-agent
 type: application
-version: 0.3.2
+version: 0.3.3
