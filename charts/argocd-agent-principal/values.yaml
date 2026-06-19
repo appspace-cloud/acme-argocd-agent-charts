@@ -48,6 +48,9 @@ service:
   port: 443
   # -- Container port the gRPC server listens on.
   targetPort: 8443
+  # -- Static IP to assign to the LoadBalancer. Leave empty to use a GCP-assigned ephemeral IP.
+  # Must match a reserved GCP compute address name/value in the same region.
+  loadBalancerIP: ""
   # -- Annotations to add to the gRPC Service.
   annotations: {}
 

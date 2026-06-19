@@ -182,6 +182,12 @@
           "required": [],
           "title": "annotations",
           "type": "object"
+        },
+        "loadBalancerIP": {
+          "default": "",
+          "description": "Static IP to pin to the LoadBalancer. Empty string = GCP-assigned ephemeral IP.",
+          "title": "loadBalancerIP",
+          "type": "string"
         }
       },
       "required": [
