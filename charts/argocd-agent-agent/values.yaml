@@ -27,11 +27,12 @@ replicaCount: 1
 # -- Image pull secrets for private registries.
 imagePullSecrets: []
 # -- Deployment update strategy (passed through as `spec.strategy`).
+# Recreate is required here: with RollingUpdate, the old and the new agent pod
+# run at the same time and both connect to the principal with the same agent
+# name. Duplicate streams double event delivery and can break the principal
+# recv queue size limit (see argoproj-labs/argocd-agent issue 1053).
 updateStrategy:
-  type: RollingUpdate
-  rollingUpdate:
-    maxSurge: 25%
-    maxUnavailable: 25%
+  type: Recreate
 # -- Number of old ReplicaSets to retain for rollback.
 revisionHistoryLimit: 10
 # -- Time allowed for the Deployment to make progress before the controller reports failure.
