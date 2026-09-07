@@ -15,7 +15,7 @@ fullnameOverride: ""
 ## @section Image
 image:
   # -- Container image repository for the agent.
-  repository: ghcr.io/argoproj-labs/argocd-agent/argocd-agent
+  repository: quay.io/argoprojlabs/argocd-agent
   # -- Overrides the image tag whose default is the chart appVersion.
   tag: ""
   # -- Image pull policy for the agent container.
@@ -26,6 +26,9 @@ image:
 replicaCount: 1
 # -- Image pull secrets for private registries.
 imagePullSecrets: []
+# -- Extra environment variables for the container. Lets new upstream env knobs
+# be set without a chart change.
+extraEnv: []
 # -- Deployment update strategy (passed through as `spec.strategy`).
 # Recreate is required here: with RollingUpdate, the old and the new agent pod
 # run at the same time and both connect to the principal with the same agent
