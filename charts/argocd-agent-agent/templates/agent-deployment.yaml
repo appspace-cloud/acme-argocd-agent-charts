@@ -273,6 +273,9 @@ spec:
                 name: {{ include "argocd-agent-agent.paramsConfigMapName" . }}
                 key: agent.label-selector
                 optional: true
+          {{- with .Values.extraEnv }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
           ports:
             - name: metrics
               containerPort: {{ .Values.metricsPort }}

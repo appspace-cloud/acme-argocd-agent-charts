@@ -20,6 +20,9 @@ image:
 replicaCount: 1
 # -- Image pull secrets for private registries.
 imagePullSecrets: []
+# -- Extra environment variables for the container. Lets new upstream env knobs
+# be set without a chart change.
+extraEnv: []
 # -- Deployment update strategy (passed through as `spec.strategy`).
 # Recreate avoids running two principals at the same time during an update.
 # Overlapping principals accept duplicate agent connections, which duplicates

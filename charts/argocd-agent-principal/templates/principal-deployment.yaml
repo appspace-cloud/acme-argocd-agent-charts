@@ -356,6 +356,9 @@ spec:
               secretKeyRef:
                 name: {{ .Values.redisSecretName }}
                 key: {{ .Values.redisPasswordKey }}
+          {{- with .Values.extraEnv }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
           ports:
             - containerPort: {{ .Values.principal.listen.port }}
               name: principal
