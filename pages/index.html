@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>acme-argocd-agent-charts — Helm chart repository</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff; --fg: #1f2328; --muted: #59636e;
+    --border: #d1d9e0; --code-bg: #f6f8fa; --link: #0969da;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1;
+      --border: #3d444d; --code-bg: #151b23; --link: #4493f8;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 3rem 1.25rem 4rem;
+    background: var(--bg); color: var(--fg);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  main { max-width: 44rem; margin: 0 auto; }
+  h1 { font-size: 1.9rem; margin: 0 0 .4rem; }
+  h2 { font-size: 1.1rem; margin: 2.2rem 0 .6rem; }
+  p.tagline { color: var(--muted); margin: 0 0 2rem; font-size: 1.05rem; }
+  a { color: var(--link); }
+  code { background: var(--code-bg); padding: .15rem .35rem; border-radius: 4px; font-size: .9em; }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 6px; padding: .9rem 1rem; overflow-x: auto;
+  }
+  pre code { background: none; padding: 0; }
+  ul { padding-left: 1.2rem; }
+  li { margin: .3rem 0; }
+  p.note {
+    border-left: 3px solid var(--border); margin: 1.2rem 0 0;
+    padding: .1rem 0 .1rem .9rem; color: var(--muted);
+  }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: .875rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>acme-argocd-agent-charts</h1>
+  <p class="tagline">Helm charts for the argocd-agent principal and agent components.</p>
+
+  <p>
+    This site is the Helm chart repository. The chart index is at
+    <a href="index.yaml">index.yaml</a>. It points to the packaged charts: most of them
+    are attached to the
+    <a href="https://github.com/appspace-cloud/acme-argocd-agent-charts/releases">GitHub releases</a>,
+    the two oldest ones are served from this site.
+  </p>
+
+  <h2>Charts</h2>
+  <ul>
+    <li><code>argocd-agent-principal</code> — runs on the hub cluster. It receives the connections from the agents.</li>
+    <li><code>argocd-agent-agent</code> — runs on each spoke cluster. It connects out to the principal.</li>
+  </ul>
+  <p>For the current versions of both charts, see <a href="index.yaml">index.yaml</a>.</p>
+
+  <h2>Add the repository</h2>
+<pre><code>helm repo add acme-argocd-agent https://appspace-cloud.github.io/acme-argocd-agent-charts
+helm repo update
+helm search repo acme-argocd-agent</code></pre>
+
+  <h2>Install the principal (hub cluster)</h2>
+<pre><code>helm install argocd-agent-principal acme-argocd-agent/argocd-agent-principal \
+  --namespace argocd</code></pre>
+
+  <h2>Install the agent (each spoke cluster)</h2>
+<pre><code>helm install argocd-agent acme-argocd-agent/argocd-agent-agent \
+  --namespace argocd</code></pre>
+
+  <p class="note">
+    The principal and the agent must run the same argocd-agent version. The principal
+    rejects an agent on a different version. The two chart versions are not the same
+    number, so check the <code>appVersion</code> of each chart, not the chart version.
+  </p>
+
+  <h2>Documentation</h2>
+  <ul>
+    <li><a href="https://github.com/appspace-cloud/acme-argocd-agent-charts">Repository and README</a></li>
+    <li><a href="https://github.com/appspace-cloud/acme-argocd-agent-charts/blob/main/charts/argocd-agent-principal/README.md">Principal chart README</a></li>
+    <li><a href="https://github.com/appspace-cloud/acme-argocd-agent-charts/blob/main/charts/argocd-agent-principal/values.yaml">Principal chart values</a></li>
+    <li><a href="https://github.com/appspace-cloud/acme-argocd-agent-charts/blob/main/charts/argocd-agent-agent/values.yaml">Agent chart values</a></li>
+    <li><a href="https://github.com/argoproj-labs/argocd-agent">Upstream project: argoproj-labs/argocd-agent</a></li>
+  </ul>
+
+  <footer>Appspace CloudOps · the chart index is published by CI on every push to main.</footer>
+</main>
+</body>
+</html>
