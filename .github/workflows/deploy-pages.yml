@@ -6,18 +6,20 @@ name: Deploy Helm chart index to Pages
 # the retired Node.js 20 runner) and has already failed once here.
 # Requires Settings > Pages > Source = "GitHub Actions".
 #
-# Three triggers, because a push alone is not enough: chart-releaser pushes gh-pages
-# with the default GITHUB_TOKEN, and GitHub does not cascade-trigger workflows from
-# such a push — so the release path needs workflow_run. The push trigger covers a
-# HAND edit of gh-pages (this repo has withdrawn broken chart versions that way
-# twice), which the legacy builder used to publish on its own.
+# workflow_run, not push: chart-releaser pushes gh-pages with the default
+# GITHUB_TOKEN, and GitHub does not cascade-trigger workflows from such a push.
+#
+# A push trigger on gh-pages cannot work either — on a push event GitHub reads the
+# workflow files from the pushed ref, and this file lives only on main (probed
+# 2026-09-09: a hand push to gh-pages produced no run). So a HAND edit of gh-pages,
+# which this repo has used twice to withdraw broken chart versions, publishes
+# nothing on its own. Run it after such an edit:
+#     gh workflow run deploy-pages.yml --ref main
 
 on:
   workflow_run:
     workflows: ["Release Charts"]
     types: [completed]
-  push:
-    branches: [gh-pages]
   workflow_dispatch:
 
 permissions:
@@ -32,8 +34,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # Only proceed on a successful Release Charts run. push and workflow_dispatch
-    # have no event.workflow_run, so they always run.
+    # Only proceed on a successful Release Charts run. workflow_dispatch has no
+    # event.workflow_run, so it always runs.
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     environment:
       name: github-pages
