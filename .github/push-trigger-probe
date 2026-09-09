@@ -1,0 +1,1 @@
+probe: does a push to gh-pages trigger a workflow that only exists on main?
