@@ -1,0 +1,125 @@
+name: Deploy Helm chart index to Pages
+
+# Publishes the gh-pages branch (index.yaml, the two oldest .tgz, charts/, README)
+# plus pages/index.html from main, through the modern Actions Pages deployment.
+# Replaces the legacy "deploy from a branch" builder, which is deprecated (it forces
+# the retired Node.js 20 runner) and has already failed once here.
+# Requires Settings > Pages > Source = "GitHub Actions".
+#
+# Three triggers, because a push alone is not enough: chart-releaser pushes gh-pages
+# with the default GITHUB_TOKEN, and GitHub does not cascade-trigger workflows from
+# such a push — so the release path needs workflow_run. The push trigger covers a
+# HAND edit of gh-pages (this repo has withdrawn broken chart versions that way
+# twice), which the legacy builder used to publish on its own.
+
+on:
+  workflow_run:
+    workflows: ["Release Charts"]
+    types: [completed]
+  push:
+    branches: [gh-pages]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Only proceed on a successful Release Charts run. push and workflow_dispatch
+    # have no event.workflow_run, so they always run.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: gh-pages
+
+      # main carries its own stale index.yaml, so a checkout of the wrong ref would
+      # publish an index missing every current version — and would do it green.
+      - name: Assert the gh-pages checkout
+        run: |
+          test "$(git rev-parse --abbrev-ref HEAD)" = gh-pages
+          test -s index.yaml
+
+      # gh-pages has no index.html, so the site root 404s. Ship the landing page
+      # from the default branch next to it. Explicit ref: on a workflow_run event
+      # the checkout default is the triggering run's ref.
+      - name: Checkout landing page from the default branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: .landing
+          sparse-checkout: pages
+          sparse-checkout-cone-mode: false
+
+      - name: Add landing page
+        run: |
+          cp .landing/pages/index.html index.html
+          rm -rf .landing
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: .
+
+      # actions/deploy-pages only retries polling an in-progress deployment. The
+      # failure to survive is a flat "Deployment failed, try again later." when
+      # CREATING it, so the retry has to wrap the whole action. Repeating the
+      # first-party step keeps the id-token relay first-party.
+      - name: Deploy to GitHub Pages (attempt 1)
+        id: deploy1
+        continue-on-error: true
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+        with:
+          error_count: 15
+
+      - name: Wait before retry 1
+        if: steps.deploy1.outcome == 'failure'
+        run: |
+          echo "::warning::Pages deploy attempt 1 failed (${{ steps.deploy1.outputs.status || 'no status' }}), retrying in 30s"
+          sleep 30
+
+      - name: Deploy to GitHub Pages (attempt 2)
+        id: deploy2
+        if: steps.deploy1.outcome == 'failure'
+        continue-on-error: true
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+        with:
+          error_count: 15
+
+      - name: Wait before retry 2
+        if: steps.deploy1.outcome == 'failure' && steps.deploy2.outcome == 'failure'
+        run: |
+          echo "::warning::Pages deploy attempt 2 failed, retrying in 90s"
+          sleep 90
+
+      - name: Deploy to GitHub Pages (attempt 3)
+        id: deploy3
+        if: steps.deploy1.outcome == 'failure' && steps.deploy2.outcome == 'failure'
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+        with:
+          error_count: 15
+
+      # The environment: block above reads steps.deployment.outputs.page_url, so
+      # whichever attempt succeeded has to surface its output under that id.
+      - name: Resolve deployment output
+        id: deployment
+        run: |
+          URL="${{ steps.deploy1.outputs.page_url }}"
+          if [ -z "$URL" ]; then URL="${{ steps.deploy2.outputs.page_url }}"; fi
+          if [ -z "$URL" ]; then URL="${{ steps.deploy3.outputs.page_url }}"; fi
+          if [ -z "$URL" ]; then
+            echo "::error::All 3 Pages deploy attempts failed"
+            exit 1
+          fi
+          echo "page_url=$URL" >> "$GITHUB_OUTPUT"
