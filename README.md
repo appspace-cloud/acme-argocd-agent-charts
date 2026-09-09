@@ -42,3 +42,14 @@ Charts are based on [argoproj-labs/argocd-agent](https://github.com/argoproj-lab
 ## Releases
 
 Chart packages are published as [GitHub Releases](https://github.com/appspace-cloud/acme-argocd-agent-charts/releases) and served via [GitHub Pages](https://appspace-cloud.github.io/acme-argocd-agent-charts).
+
+A push to `main` runs `Release Charts`, which writes `index.yaml` on the `gh-pages`
+branch. The site itself is then published by the `Deploy Helm chart index to Pages`
+workflow, which is what serves that branch plus `pages/index.html`.
+
+If you ever edit `gh-pages` by hand — for example to withdraw a broken chart version
+from `index.yaml` — the edit does **not** reach the live site by itself. Publish it with:
+
+```bash
+gh workflow run deploy-pages.yml --ref main
+```
