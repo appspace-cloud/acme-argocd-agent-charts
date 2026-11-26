@@ -593,6 +593,13 @@
                 "text",
                 "json"
               ]
+            },
+            "fullDetail": {
+              "default": "",
+              "title": "fullDetail",
+              "type": "string",
+              "description": "Comma-separated full-detail logging categories. Empty disables it.",
+              "pattern": "^$|^ *(all|actions|events|informers) *(, *(all|actions|events|informers) *)*$"
             }
           },
           "required": [
