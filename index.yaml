@@ -2,6 +2,28 @@ apiVersion: v1
 entries:
   argocd-agent-agent:
   - apiVersion: v2
+    appVersion: v0.11.0
+    created: "2026-11-27T07:42:28.446599845Z"
+    description: Argo CD Agent component for workload clusters - connects outbound
+      to the principal on the control plane
+    digest: 5d7c48ef9668cd0a80483236920cdd0b2f2990b7bcfad128302fce2691ad95b4
+    home: https://github.com/argoproj-labs/argocd-agent
+    keywords:
+    - argocd
+    - gitops
+    - multi-cluster
+    - agent
+    maintainers:
+    - email: platform@appspace.com
+      name: Appspace Platform Engineering
+    name: argocd-agent-agent
+    sources:
+    - https://github.com/argoproj-labs/argocd-agent
+    type: application
+    urls:
+    - https://github.com/appspace-cloud/acme-argocd-agent-charts/releases/download/argocd-agent-agent-0.2.5/argocd-agent-agent-0.2.5.tgz
+    version: 0.2.5
+  - apiVersion: v2
     appVersion: v0.10.0
     created: "2026-09-07T14:18:18.138013267Z"
     description: Argo CD Agent component for workload clusters - connects outbound
@@ -160,6 +182,29 @@ entries:
   - annotations:
       charts.openshift.io/name: Argo CD Agent - Principal Component
     apiVersion: v2
+    appVersion: v0.11.0
+    created: "2026-11-27T07:42:28.670005847Z"
+    description: Argo CD Agent Principal component for multi-cluster application management
+    digest: e2731e826897176b97deba4d1a681291e3add25b3d8c4dda68ca4929bb2df162
+    home: https://github.com/argoproj-labs/argocd-agent
+    keywords:
+    - argocd
+    - gitops
+    - agent
+    kubeVersion: '>=1.24.0-0'
+    maintainers:
+    - name: Argo Project Maintainers
+      url: https://github.com/argoproj-labs/argocd-agent
+    name: argocd-agent-principal
+    sources:
+    - https://github.com/argoproj-labs/argocd-agent
+    type: application
+    urls:
+    - https://github.com/appspace-cloud/acme-argocd-agent-charts/releases/download/argocd-agent-principal-0.3.7/argocd-agent-principal-0.3.7.tgz
+    version: 0.3.7
+  - annotations:
+      charts.openshift.io/name: Argo CD Agent - Principal Component
+    apiVersion: v2
     appVersion: v0.10.0
     created: "2026-09-07T14:18:18.415873278Z"
     description: Argo CD Agent Principal component for multi-cluster application management
@@ -295,4 +340,4 @@ entries:
     urls:
     - https://appspace-cloud.github.io/acme-argocd-agent-charts/argocd-agent-principal-0.3.1.tgz
     version: 0.3.1
-generated: "2026-09-07T14:18:18.415940253Z"
+generated: "2026-11-27T07:42:28.670078845Z"
